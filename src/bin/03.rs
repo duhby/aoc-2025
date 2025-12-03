@@ -7,6 +7,7 @@ pub fn part_one(input: &str) -> Option<u64> {
         if bank == "" {
             continue;
         }
+        let bank = bank.trim();
         let chars: Vec<char> = bank.chars().collect();
         let mut highest_1 = (0, 0);
         for (i, c) in chars[0..chars.len() - 1].iter().enumerate() {
@@ -31,15 +32,11 @@ pub fn part_one(input: &str) -> Option<u64> {
 pub fn part_two(input: &str) -> Option<u64> {
     let banks: Vec<&str> = input.split('\n').collect();
     let mut highest: Vec<u64> = vec![];
-    let mut i = 0;
     for bank in banks {
-        if i == 0 {
-            i += 1;
-            continue;
-        }
         if bank == "" {
             continue;
         }
+        let bank = bank.trim();
         let chars: Vec<char> = bank.chars().collect();
         let mut arr = vec![vec!["".to_string(); chars.len()]; 12];
         for i in 0..12 {
@@ -48,24 +45,21 @@ pub fn part_two(input: &str) -> Option<u64> {
                     if j == chars.len() - 1 {
                         ""
                     } else {
-                        arr[i - 1][j + 1..chars.len()].iter().max().unwrap()
+                        arr[i - 1][j + 1].as_str()
                     }
                 } else {
                     ""
                 };
-                let max_str_wo: u64 = arr[i][j..chars.len()]
-                    .iter()
-                    .max()
-                    .unwrap()
-                    .parse()
-                    .unwrap_or(0);
+                let max_str_wo: u64 = if j == chars.len() - 1 {
+                    0
+                } else {
+                    arr[i][j + 1].parse().unwrap()
+                };
                 let max_str_w: u64 = format!("{}{}", chars[j], max_str_w).parse().unwrap();
                 arr[i][j] = max_str_wo.max(max_str_w).to_string();
             }
         }
-        dbg!(&arr);
         highest.push((arr[11][0]).parse().unwrap());
-        break;
     }
 
     Some(highest.iter().sum::<u64>())
@@ -84,6 +78,6 @@ mod tests {
     #[test]
     fn test_part_two() {
         let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, Some(17229));
+        assert_eq!(result, Some(3121910778619));
     }
 }
